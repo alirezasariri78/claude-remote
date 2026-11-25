@@ -1,0 +1,23 @@
+{
+  "name": "claude-remote-bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.mjs",
+    "service:install": "node service.mjs install",
+    "service:uninstall": "node service.mjs uninstall",
+    "hook:install": "node hook/install.mjs install",
+    "hook:uninstall": "node hook/install.mjs uninstall"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.326",
+    "node-windows": "^1.0.0-beta.8",
+    "undici": "^8.12.4",
+    "ws": "^8.23.0"
+  }
+}

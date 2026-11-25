@@ -1,0 +1,17 @@
+# Dependencies and build output
+node_modules/
+.expo/
+dist/
+mobile/android/
+mobile/ios/
+*.apk
+*.log
+
+# Windows services created on install
+**/daemon/
+
+# Per-PC settings and state (contain tokens or personal data)
+server/bridge-config.json
+server/session-grants.json
+server/telegram-requests.json
+mobile/service/web-config.json

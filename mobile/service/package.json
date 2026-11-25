@@ -1,0 +1,15 @@
+{
+  "name": "claude-remote-web",
+  "version": "1.0.0",
+  "description": "Serves the Claude Remote app as a website, as a Windows service.",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "service:install": "node service.mjs install",
+    "service:uninstall": "node service.mjs uninstall"
+  },
+  "dependencies": {
+    "node-windows": "^1.0.0-beta.8"
+  }
+}
