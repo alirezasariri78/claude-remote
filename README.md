@@ -135,4 +135,4 @@ Adding another client (Slack, Discord, a CLI…) is one file in `server/transpor
 
 ## Status
 
-Built and tested on Windows 11. The Linux and macOS installer is new: if something does not work on your system, please open an issue. Pull requests are welcome.
+Built and tested on Windows 11; the Linux installer is tested on Ubuntu (install, update, uninstall). macOS is not tested yet: if something does not work on your system, please open an issue. Pull requests are welcome.
