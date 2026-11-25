@@ -1,6 +1,6 @@
 # Claude Remote: setup and reference
 
-Back to the [README](../README.md).
+Back to the [README](../README.md) · Installing on Windows, Linux or macOS: [INSTALL.md](INSTALL.md)
 
 ```
  Mobile / web app ──┐

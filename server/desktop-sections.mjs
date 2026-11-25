@@ -12,9 +12,16 @@ let cache = { at: 0, map: new Map() };
 
 function dataDirs() {
   if (process.env.BRIDGE_DESKTOP_DATA) return [process.env.BRIDGE_DESKTOP_DATA];
-  const local = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
+  const home = os.homedir();
+  const local = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+  const bases =
+    process.platform === 'darwin'
+      ? [path.join(home, 'Library', 'Application Support', 'Claude')]
+      : process.platform === 'win32'
+        ? [path.join(local, 'Claude-Data'), path.join(process.env.APPDATA || '', 'Claude')]
+        : [path.join(process.env.XDG_CONFIG_HOME || path.join(home, '.config'), 'Claude')];
   const dirs = [];
-  for (const base of [path.join(local, 'Claude-Data'), path.join(process.env.APPDATA || '', 'Claude')]) {
+  for (const base of bases) {
     try {
       if (fs.existsSync(path.join(base, 'claude_desktop_config.json'))) dirs.push(base);
       for (const d of fs.readdirSync(base, { withFileTypes: true })) {

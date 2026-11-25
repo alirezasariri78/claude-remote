@@ -4,20 +4,20 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-e07a5a" /></a>
-  <img alt="Platform: Windows" src="https://img.shields.io/badge/PC-Windows%2010%20%7C%2011-3b3734" />
+  <img alt="Runs on Windows, Linux, macOS" src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20Linux%20%7C%20macOS-3b3734" />
   <img alt="Clients" src="https://img.shields.io/badge/clients-Android%20%7C%20Web%20%7C%20Telegram-3b3734" />
 </p>
 
 # Claude Remote
 
-**Your Claude Code, in your pocket.** Keep working with the Claude Code sessions on your own PC from your phone, a browser, or Telegram: read the conversation, send the next instruction, and approve what Claude wants to do — while you are away from your desk.
+**Your Claude Code, in your pocket.** Keep working with the Claude Code sessions on your own computer from your phone, a browser, or Telegram: read the conversation, send the next instruction, and approve what Claude wants to do — while you are away from your desk.
 
 > Unofficial, community project. Not made by or affiliated with Anthropic. "Claude" is a trademark of Anthropic.
 
 ```
    📱 Phone app / browser ──┐                                         ┌──► your Claude Code sessions
                             ├──►  Claude Remote service on your PC ───┤
-   ✈️  Telegram bot ─────────┘     (a small Windows service)           └──► permission prompts from the
+   ✈️  Telegram bot ─────────┘     (a small background service)       └──► permission prompts from the
                                                                             Claude desktop app
 ```
 
@@ -59,39 +59,42 @@ All clients talk to one small service on your PC. Every client sees the same ses
 
 ## How it works
 
-The service runs on your Windows PC as your user and drives Claude Code through the official Claude Agent SDK. It works with the same sessions Claude Code already stores on the PC, so nothing moves to a third-party server: your code, files and conversations stay on your machine. The phone talks to the service over your network (or Tailscale); the Telegram bot only makes outbound requests.
+The service runs on your computer (Windows, Linux or macOS) as your user and drives Claude Code through the official Claude Agent SDK. It works with the same sessions Claude Code already stores on the PC, so nothing moves to a third-party server: your code, files and conversations stay on your machine. The phone talks to the service over your network (or Tailscale); the Telegram bot only makes outbound requests.
 
 For sessions you run in the Claude desktop app, a Claude Code hook hands each permission prompt to the service and waits for a remote answer. If nobody answers in time, or the service is off, Claude simply shows its normal prompt on the computer.
 
 ## Quick start
 
-Requirements: Windows 10/11, [Node.js](https://nodejs.org) 20+, and Claude Code installed and signed in (`claude`, then `/login`).
+Works on **Windows, Linux and macOS**. You need [Node.js](https://nodejs.org) 20+ and Claude Code installed and signed in (`claude`, then `/login`).
 
-**One-script install** (PowerShell as Administrator):
-
-```powershell
-git clone https://github.com/alirezasariri78/claude-remote.git C:\claude-remote
-cd C:\claude-remote
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+```bash
+git clone https://github.com/alirezasariri78/claude-remote.git
+cd claude-remote
 ```
 
-It asks for your Windows account (the service runs as you, so it sees your Claude sign-in and sessions), an optional proxy, and whether to forward desktop-app prompts and open the firewall. Then it installs the packages, builds the web app, installs both Windows services and starts them. At the end it prints the address to open on your phone; the access token is in `server\bridge-config.json`.
+| | Install | Runs as |
+|---|---|---|
+| **Windows** | PowerShell as Administrator: `powershell -ExecutionPolicy Bypass -File .\install.ps1` | Windows services |
+| **Linux** | `./install.sh` (as your user, not sudo) | systemd user services |
+| **macOS** | `./install.sh` | launchd agents |
 
-To update later: `git pull`, then `.\install.ps1 -KeepServices`. Your settings are kept.
+The installer asks a few questions (an optional proxy, whether to forward desktop-app prompts, the firewall), installs the packages, builds the web app, and starts two background services that run as you, so they see your Claude sign-in and sessions. At the end it prints the address to open on your phone; the access token is in `server/bridge-config.json`.
 
 **Then connect a client:**
 
-- **Phone browser:** open `http://<PC address>:8091` and enter the token. Install it from the browser menu to get an app icon.
-- **Android app:** build the APK with `mobile\build-apk.ps1`, install it, and enter the address and token.
-- **Telegram:** create a bot with @BotFather, put its token in `server\bridge-config.json`, restart the service, and follow the bot's reply.
+- **Phone browser:** open `http://<computer address>:8091` and enter the token. Install it from the browser menu to get an app icon.
+- **Android app:** install the APK and enter `<computer address>:8787` and the token.
+- **Telegram:** create a bot with @BotFather, put its token in `server/bridge-config.json`, restart the service, and follow the bot's reply.
 
-**Just trying it?** Run the service in a terminal in demo mode, with simulated replies and no usage spent: `cd server; npm install; $env:BRIDGE_DEMO=1; npm start`.
+**Update later:** `git pull`, then `.\install.ps1 -KeepServices` (Windows) or `./install.sh --update` (Linux, macOS). Your settings are kept.
 
-**[docs/SETUP.md](docs/SETUP.md)** has the manual setup, the desktop-app hook, the PWA, the Telegram bot, and the full reference.
+**Just trying it?** Run the service in a terminal in demo mode, with simulated replies and no usage spent: `cd server && npm install`, then `BRIDGE_DEMO=1 npm start` (on Windows PowerShell: `$env:BRIDGE_DEMO=1; npm start`).
+
+**[docs/INSTALL.md](docs/INSTALL.md)** has step-by-step instructions for each system, updating, logs and troubleshooting. **[docs/SETUP.md](docs/SETUP.md)** is the full reference: the desktop-app hook, the PWA, the Telegram bot, and adding your own client.
 
 ## Security
 
-Whoever has the address and token can run commands on your PC as you. Treat the token like a password.
+Whoever has the address and token can run commands on your computer as you. Treat the token like a password.
 
 - Keep the service on your own network, or reach it through a VPN such as Tailscale. **Never forward the port to the internet.**
 - The phone connection is plain `ws://`; on networks you do not control, use a VPN or a TLS reverse proxy.
@@ -125,11 +128,11 @@ Claude Code has a built-in [Remote Control](https://code.claude.com/docs/en/remo
 |---|---|
 | `server/` | The service: `core.mjs` (sessions, permissions), `transports/` (WebSocket, Telegram), `hook/` (desktop-app permission hook) |
 | `mobile/` | The Expo / React Native app (Android and web) |
-| `mobile/service/` | Small static server that hosts the web app as a Windows service |
+| `mobile/service/` | Small static server that hosts the web app as a background service |
 | `docs/` | Setup guide and reference |
 
 Adding another client (Slack, Discord, a CLI…) is one file in `server/transports/`; see [docs/SETUP.md](docs/SETUP.md#adding-another-client).
 
 ## Status
 
-Built and tested on Windows 11. macOS and Linux are untested (the service is plain Node.js, but the installer and service wrapper are Windows-only). Issues and pull requests are welcome.
+Built and tested on Windows 11. The Linux and macOS installer is new: if something does not work on your system, please open an issue. Pull requests are welcome.
